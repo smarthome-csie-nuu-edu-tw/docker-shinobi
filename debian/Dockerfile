@@ -6,20 +6,10 @@ FROM nvidia/cuda:10.0-cudnn7-devel
 LABEL Author="MiGoller"
 
 # 安裝Node8 
-# 參考來源：https://stackoverflow.com/questions/36399848/install-node-in-dockerfile
 #
 ######################################################################################
-ENV NODE_VERSION=8.10.0
-RUN apt-get update && \
-    apt-get install wget curl ca-certificates rsync -y
-RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-ENV NVM_DIR=/root/.nvm
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" &&  nvm use v${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/node /usr/bin/
-RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm /usr/bin/
-RUN /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm install  leasot@latest -g
+RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - && \
+    apt-get install -y nodejs
 
 # Set environment variables to default values
 ENV ADMIN_USER=m0724001@gm.nuu.edu.tw \
