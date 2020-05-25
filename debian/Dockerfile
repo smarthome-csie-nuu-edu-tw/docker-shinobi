@@ -5,6 +5,9 @@ FROM nvidia/cuda:10.0-cudnn7-devel
 
 LABEL Author="MiGoller"
 
+# 安裝前置套件
+RUN apt-get update && apt-get install -y curl sudo
+
 # 安裝Node8 
 #
 ######################################################################################
