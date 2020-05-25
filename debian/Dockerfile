@@ -1,13 +1,29 @@
 #
 # Builds a custom docker image for ShinobiCCTV Pro
 #
-FROM node:8
+FROM nvidia/cuda:10.0-cudnn7-devel
 
 LABEL Author="MiGoller"
 
+# 安裝Node8 
+# 參考來源：https://stackoverflow.com/questions/36399848/install-node-in-dockerfile
+#
+######################################################################################
+ENV NODE_VERSION=8.10.0
+RUN apt-get update && \
+    apt-get install wget curl ca-certificates rsync -y
+RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" &&  nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/node /usr/bin/
+RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm /usr/bin/
+RUN /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm install  leasot@latest -g
+
 # Set environment variables to default values
-ENV ADMIN_USER=admin@shinobi.video \
-    ADMIN_PASSWORD=administrator \
+ENV ADMIN_USER=m0724001@gm.nuu.edu.tw \
+    ADMIN_PASSWORD=nuuCSIE404 \
     CRON_KEY=fd6c7849-904d-47ea-922b-5143358ba0de \
     PLUGINKEY_MOTION=b7502fd9-506c-4dda-9b56-8e699a6bc41c \
     PLUGINKEY_OPENCV=f078bcfe-c39a-4eb5-bd52-9382ca828e8a \
