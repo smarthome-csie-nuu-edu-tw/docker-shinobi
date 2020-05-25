@@ -40,8 +40,8 @@ RUN mkdir -p /opt/shinobi
 WORKDIR /opt/shinobi
 
 # Install package dependencies
-RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list \
-    && apt-get update \
+#RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list \
+RUN apt-get update \
     && apt-get install -y ffmpeg python pkg-config libcairo-dev make g++ libjpeg-dev git mysql-client \
     && apt-get clean
 
