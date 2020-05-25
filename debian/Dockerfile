@@ -23,7 +23,7 @@ RUN /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm install  leasot@latest -g
 
 # Set environment variables to default values
 ENV ADMIN_USER=m0724001@gm.nuu.edu.tw \
-    ADMIN_PASSWORD=nuuCSIE404 \
+    ADMIN_PASSWORD=123456 \
     CRON_KEY=fd6c7849-904d-47ea-922b-5143358ba0de \
     PLUGINKEY_MOTION=b7502fd9-506c-4dda-9b56-8e699a6bc41c \
     PLUGINKEY_OPENCV=f078bcfe-c39a-4eb5-bd52-9382ca828e8a \
