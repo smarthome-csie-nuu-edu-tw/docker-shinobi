@@ -33,10 +33,15 @@ RUN mkdir -p /opt/shinobi
 WORKDIR /opt/shinobi
 
 # Install package dependencies
-#RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list \
 RUN apt-get update \
     && apt-get install -y ffmpeg python pkg-config libcairo-dev make g++ libjpeg-dev git mysql-client \
     && apt-get clean
+
+# 修復Cannot load libnvidia-encode.so.1
+# 參考來源 https://segmentfault.com/a/1190000013518764
+RUN git clone https://github.com/larry011/docker-ffmpeg-nvidia \
+    && cd docker-ffmpeg-nvidia/ \
+    && ./build.sh
 
 # Clone the Shinobi CCTV PRO repo
 RUN mkdir master_temp
