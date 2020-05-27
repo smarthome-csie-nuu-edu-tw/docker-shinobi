@@ -2,42 +2,39 @@
 # Builds a custom docker image for ShinobiCCTV Pro
 #
 
-# FFMPEG GPU專用
+# FFMPEG GPU專用 
+# https://gitlab.com/nvidia/container-images/samples/-/blob/master/cuda/ubuntu16.04/ffmpeg-gpu/Dockerfile
+# 
 ##############################################################################################################
-FROM nvidia/cuda:10.0-devel-ubuntu18.04 as builder
+FROM nvidia/cuda:9.0-devel as ffmpeg
 
-ENV NASM_VERSION 2.14
-ENV NVCODEC_VERSION 8.2.15.6
-ENV FFMPEG_VERSION 4.1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        libgl1-mesa-glx \
+        make \
+        nasm && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y autoconf curl git pkg-config
-
-RUN curl -fsSLO https://www.nasm.us/pub/nasm/releasebuilds/$NASM_VERSION/nasm-$NASM_VERSION.tar.bz2 \
-  && tar -xjf nasm-$NASM_VERSION.tar.bz2 \
-  && cd nasm-$NASM_VERSION \
-  && ./autogen.sh \
-  && ./configure \
-  && make -j$(nproc) \
-  && make install
-
-RUN git clone -b n$NVCODEC_VERSION --depth 1 https://git.videolan.org/git/ffmpeg/nv-codec-headers \
-  && cd nv-codec-headers \
-  && make install
-
-ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig
-RUN curl -fsSLO https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.bz2 \
-  && tar -xjf ffmpeg-$FFMPEG_VERSION.tar.bz2 \
-  && cd ffmpeg-$FFMPEG_VERSION \
-  && ./configure --enable-nvenc \
-  && make -j$(nproc) \
-  && make install
+RUN git clone --depth 1 --branch n3.4.1 https://github.com/ffmpeg/ffmpeg ffmpeg && \
+    cd ffmpeg && \
+    ./configure --enable-cuda --enable-cuvid --enable-nvenc --enable-nonfree --enable-libnpp \
+                --extra-cflags=-I/usr/local/cuda/include \
+                --extra-ldflags=-L/usr/local/cuda/lib64 \
+                --prefix=/usr/local/ffmpeg --enable-shared --disable-static \
+                --disable-manpages --disable-doc --disable-podpages && \
+                make -j"$(nproc)" install && \
+                ldconfig
 
 ##############################################################################################################
 
-FROM nvidia/cuda:10.0-cudnn7-devel
+FROM nvidia/cuda:9.0-base
+
+COPY --from=ffmpeg /usr/local/ffmpeg /usr/local
+
+ENV NVIDIA_DRIVER_CAPABILITIES $NVIDIA_DRIVER_CAPABILITIES,video
 
 LABEL Author="MiGoller"
-
 # 安裝前置套件
 RUN apt-get update && apt-get install -y curl sudo
 
@@ -70,9 +67,10 @@ RUN apt-get update \
     && apt-get install -y python pkg-config libcairo-dev make g++ libjpeg-dev git mysql-client \
     && apt-get clean
 
-# FFMPEG GPU
-COPY --from=builder /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
-COPY --from=builder /usr/local/bin/ffprobe /usr/local/bin/ffprobe
+# GPU FFMPEG
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cuda-npp-9-0 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Clone the Shinobi CCTV PRO repo
 RUN mkdir master_temp
