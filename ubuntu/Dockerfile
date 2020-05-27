@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libgl1-mesa-glx \
         make \
         nasm && \
-        libx265-dev libnuma-dev libvpx-dev libfdk-aac-dev libmp3lame-dev libopus-dev \
     rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth 1 --branch n3.4.1 https://github.com/ffmpeg/ffmpeg ffmpeg && \
