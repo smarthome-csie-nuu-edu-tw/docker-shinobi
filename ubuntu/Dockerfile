@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN git clone --depth 1 --branch n3.4.1 https://github.com/ffmpeg/ffmpeg ffmpeg && \
     cd ffmpeg && \
     ./configure --enable-cuda --enable-cuvid --enable-nvenc --enable-nonfree --enable-libnpp \
+                # 修復 ERROR: libx264 not found
+                --enable-shared \
                 # 修復 ffmpeg: Unrecognized option 'crf'. Error splitting the argument list: Option not found
                 --enable-gpl --enable-libx264 \
                 --extra-cflags=-I/usr/local/cuda/include \
