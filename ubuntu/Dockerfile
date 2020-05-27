@@ -22,7 +22,7 @@ RUN git clone --depth 1 --branch n3.4.1 https://github.com/ffmpeg/ffmpeg ffmpeg 
                 # 修復 ERROR: libx264 not found
                 --enable-shared \
                 # 修復 ffmpeg: Unrecognized option 'crf'. Error splitting the argument list: Option not found
-                --enable-gpl --enable-libx264 \
+                --enable-gpl \
                 --extra-cflags=-I/usr/local/cuda/include \
                 --extra-ldflags=-L/usr/local/cuda/lib64 \
                 --prefix=/usr/local/ffmpeg --enable-shared --disable-static \
